@@ -13,6 +13,28 @@ library(rtweet)
 # Note need to have created token
 tw <- search_tweets("#debatenight", n = 5000, token = twitter_token, lang = "en")
 
+setwd("~/Tweets_Analysis/")
+
+# tweets with hashtag #debatenight from 9/25-9/28
+tw1 <- search_tweets("#debatenight", n = 100,since = "2016-09-25", until = "2016-09-28", token = twitter_token, lang = "en")
+
+save_as_csv(tw1,file_name='~/Tweets_Analysis/Data/debatenight_25_28')
+
+# use a couple of hashtags from 9/25-9/28
+tw2 <- search_tweets(paste0("#debates OR #debates2016 OR #Debates2016 #debatenight OR #debatenight2016"), n = 18000,since = "2016-09-25", until = "2016-09-28", token = twitter_token, lang = "en")
+
+save_as_csv(tw2,file_name='~/Tweets_Analysis/Data/debates_combo_25_28')
+
+# search # 
+tw3 <- search_tweets("#TrumpWon", n = 18000,since = "2016-09-25", until = "2016-09-28", token = twitter_token, lang = "en")
+
+save_as_csv(tw3,file_name='~/Tweets_Analysis/Data/trumpwon_25_28')
+
+# search # imwithher
+tw1 <- search_tweets("#imwithher", n = 18000,since = "2016-09-25", until = "2016-09-28", token = twitter_token, lang = "en")
+
+
+
 # don't include re-tweets or usernames
 # https://github.com/masalmon/first_7_jobs/blob/master/code/parse_tweets.R
 tw <- dplyr::filter(tw, is_retweet == FALSE) %>% mutate(text = gsub("\\@.*", "", text)) 
@@ -33,9 +55,9 @@ tweet_corpus <- VCorpus(tweet_source)
 
 # do some basic cleaning of the corpus text
 clean_corpus <- function(corpus){
-        corpus <- tm_map(corpus, stripWhitespace)
-        corpus <- tm_map(corpus, removePunctuation)
         corpus <- tm_map(corpus, content_transformer(tolower) )
+        corpus <- tm_map(corpus, removePunctuation)
+        corpus <- tm_map(corpus, stripWhitespace)
         corpus <- tm_map(corpus, removeWords, c(stopwords("en"), "debatenight","debates","debate","debates2016"))
         # if I want to not include their names either
         corpus <- tm_map(corpus, removeWords, c(stopwords("en"), "trump","clinton","hillary","donald"))
@@ -63,6 +85,11 @@ term_frequency[1:10]
 
 # Plot a barchart of the 10 most common words
 barplot(term_frequency[1:15],col="tan",las=2)
+
+## compare before and after
+id<-900
+tw$text[id]
+clean_corp[[id]]$content
 
 # Make a word cloud
 library(wordcloud)
