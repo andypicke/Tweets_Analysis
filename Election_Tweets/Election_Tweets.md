@@ -237,6 +237,11 @@ word_freqs <- data.frame(term=names(term_frequency),num=term_frequency)
 wordcloud(word_freqs$term,word_freqs$num,max.words=40,colors="red")
 ```
 
+```
+## Warning in wordcloud(word_freqs$term, word_freqs$num, max.words = 40,
+## colors = "red"): trumpwon could not be fit on page. It will not be plotted.
+```
+
 ![](Election_Tweets_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
 
 ### We can make this a little nicer by adding a colormap to the image.
@@ -251,12 +256,6 @@ purple_orange <- purple_orange[-(1:2)]
 
 # Create a wordcloud with purple_orange palette
 wordcloud(word_freqs$term,word_freqs$num,max.words=40,colors=purple_orange)
-```
-
-```
-## Warning in wordcloud(word_freqs$term, word_freqs$num, max.words = 40,
-## colors = purple_orange): trumpwon could not be fit on page. It will not be
-## plotted.
 ```
 
 ![](Election_Tweets_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
