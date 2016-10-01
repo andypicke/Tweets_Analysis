@@ -30,8 +30,21 @@ tw3 <- search_tweets("#TrumpWon", n = 18000,since = "2016-09-25", until = "2016-
 
 save_as_csv(tw3,file_name='~/Tweets_Analysis/Data/trumpwon_25_28')
 
+
+# search for tweets BY trump
+tw3 <- get_timeline("realDonaldTrump", n = 18000,since = "2016-09-25", until = "2016-09-28", token = twitter_token, lang = "en")
+
+save_as_csv(tw3,file_name='~/Tweets_Analysis/Data/realDonaldTrump_25_28')
+
+
+# search for tweets BY Clinton
+tw3 <- get_timeline("HillaryClinton", n = 18000,since = "2016-09-25", until = "2016-09-28", token = twitter_token, lang = "en")
+
+save_as_csv(tw3,file_name='~/Tweets_Analysis/Data/HillaryClinton_25_28')
+
+
 # search # imwithher
-tw1 <- search_tweets("#imwithher", n = 18000,since = "2016-09-25", until = "2016-09-28", token = twitter_token, lang = "en")
+tw <- search_tweets("#imwithher", n = 18000,since = "2016-09-25", until = "2016-09-28", token = twitter_token, lang = "en")
 
 
 

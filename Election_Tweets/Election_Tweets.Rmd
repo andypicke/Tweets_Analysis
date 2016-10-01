@@ -1,5 +1,5 @@
 ---
-title: "Analysis of Election Tweets"
+title: "Text Analysis of Election Tweets around the First Presidential Debate"
 author: "Andy Pickering"
 date: "9/28/2016"
 output: 
@@ -11,7 +11,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Being in the middle (or I guess thankfully near the end!) of election season, I thought it would be interesting to examine tweets about the election.
+### Being in the middle (or I guess thankfully near the end!) of election season, I thought it would be interesting to examine tweets about the election.
 
 Much of this analysis applies what I learned in a DataCamp course on text-mining: <https://www.datacamp.com/courses/intro-to-text-mining-bag-of-words>.
 
@@ -36,19 +36,21 @@ tw <- read.csv('~/Tweets_Analysis/Data/debatenight_25_28.tweets.csv')
 str(tw)
 ```
 
-There are a lot of variables; let's clean it up a bit by removing some columns we won't use:
+There are a lot of variables returned by the rtweet package; let's clean it up a bit by removing some columns we won't use:
 ```{r}
-tw2<-tw[,-c(7:10,15,16,20:23)]
+tw2<-tw[,-c(2:4,6:18,20:23)]
 str(tw2)
-head(tw2)
 ```
 
 More cleaning: keep only the tweets that were not retweets, and remove username mentions from the tweets: 
-```{r}
-library(dplyr)
+```{r }
+suppressMessages(library(dplyr))
+dim(tw2)
 tw2 <- dplyr::filter(tw2, is_retweet == FALSE) %>% mutate(text = gsub("\\@.*", "", text)) 
-head(tw2)
+dim(tw2)
+#head(tw2)
 ```
+We can see that this greatly reduces the number of tweets (indicating many were retweets).
 
 ## Cleaning Text and Making a Corpus
 
@@ -59,17 +61,17 @@ head(tw2)$text
 
 We need to clean up the tweets text before doing some analysis.. I'm going to use the tm package for this. Some of the cleaning includes: 
 
-* Remove whitespace 
-* Remove punctuation 
-* Make all lowercase 
-* Remove common words 
+* Remove whitespace
+* Remove punctuation
+* Make all lowercase
+* Remove common words
 
 
 ```{r}
 library(tm)
 
 # 1st need to interpret each element in tweets as a document
-tweet_source <- VectorSource(tw$text)
+tweet_source <- VectorSource(tw2$text)
 
 # Then make a corpus
 tweet_corpus <- VCorpus(tweet_source)
@@ -79,23 +81,22 @@ clean_corpus <- function(corpus){
         corpus <- tm_map(corpus, stripWhitespace)
         corpus <- tm_map(corpus, removePunctuation)
         corpus <- tm_map(corpus, content_transformer(tolower) )
-        corpus <- tm_map(corpus, removeWords, c(stopwords("en"), "debatenight","debates","debate","debates2016","https","hillaryclinton","donald","trump","hillary","donaldtrump"))
+        corpus <- tm_map(corpus, removeWords, c(stopwords("en"), "#DebateNight","debatenight","debates","debate","debates2016","https","clinton","hillaryclinton","donald","trump","hillary","donaldtrump"))
         return(corpus)
 }
 
 # Apply your customized function to the tweet_corp: clean_corp
 clean_corp <- clean_corpus(tweet_corpus)
-
-head(clean_corp)
 ```
 
+### Compare a tweet before and after to illustrate cleaning effects
 ```{r}
-## compare before and after
 id<-400
-tw$text[id]
+tw2$text[id]
 clean_corp[[id]]$content
 ```
 
+### Make a term document matrix
 ```{r}
 # Make a term document = matrix
 tweet_dtm <- TermDocumentMatrix(clean_corp)
@@ -134,6 +135,10 @@ word_freqs <- data.frame(term=names(term_frequency),num=term_frequency)
 # Create a wordcloud for the values in word_freqs
 wordcloud(word_freqs$term,word_freqs$num,max.words=40,colors="red")
 
+```
+
+### We can make this a little nicer by adding a colormap to the image.
+```{r}
 ## Add colors to the wordcloud
 # Create purple_orange
 purple_orange <- brewer.pal(10,"PuOr")
@@ -146,5 +151,10 @@ wordcloud(word_freqs$term,word_freqs$num,max.words=40,colors=purple_orange)
 
 ```
 
+### Issues/Lessons Learned
+* Lots of the original tweets I gathered were retweets. Is there a way to not return retweets in the search?
+* Need to remove hashtags from tweets
+* Seems like there are still a lot of common words showing up in the most frequent terms and wordclouds; I will try using a tf-idf scheme to discount words that show up in most of the tweets and emphasize the differences.
+* I'd also like to make a comparison cloud to contrast different groups (for example Trump supporters vs Clinton supporters, or tweets by Trump and Clinton themselves).
 
 
