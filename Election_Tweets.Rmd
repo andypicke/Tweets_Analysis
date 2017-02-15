@@ -2,9 +2,10 @@
 title: "Text Analysis of Election Tweets around the First Presidential Debate"
 author: "Andy Pickering"
 date: "9/28/2016"
-output: 
-  html_document: 
+output:
+  html_document:
     keep_md: yes
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -46,9 +47,9 @@ More cleaning: keep only the tweets that were not retweets, and remove username 
 ```{r }
 suppressMessages(library(dplyr))
 dim(tw2)
-tw2 <- dplyr::filter(tw2, is_retweet == FALSE) %>% mutate(text = gsub("\\@.*", "", text)) 
+tw2 <- tw2 %>% filter(is_retweet == FALSE) %>%
+        mutate(text = gsub("\\@.*", "", text)) 
 dim(tw2)
-#head(tw2)
 ```
 We can see that this greatly reduces the number of tweets (indicating many were retweets).
 

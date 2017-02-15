@@ -83,16 +83,13 @@ dim(tw2)
 ```
 
 ```r
-tw2 <- dplyr::filter(tw2, is_retweet == FALSE) %>% mutate(text = gsub("\\@.*", "", text)) 
+tw2 <- tw2 %>% filter(is_retweet == FALSE) %>%
+        mutate(text = gsub("\\@.*", "", text)) 
 dim(tw2)
 ```
 
 ```
 ## [1] 1470    3
-```
-
-```r
-#head(tw2)
 ```
 We can see that this greatly reduces the number of tweets (indicating many were retweets).
 
