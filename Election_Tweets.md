@@ -115,8 +115,9 @@ We need to clean up the tweets text before doing some analysis.. I'm going to us
 * Remove whitespace
 * Remove punctuation
 * Make all lowercase
-* Remove common words
+* Remove common words ("stopwords")
 
+Note i'm also removing some additional stopwords that are specific to these tweets. 
 
 
 ```r
@@ -166,14 +167,14 @@ clean_corp[[id]]$content
 ## [1] "   will release  taxes   releases  deleted emails "
 ```
 
-### Make a term document matrix
+### Next we make a term document matrix containing word counts, where rows are the documents and columns are words.
 
 ```r
 # Make a term document = matrix
 tweet_dtm <- TermDocumentMatrix(clean_corp)
 ```
 
-## Frequent Terms Barplot
+## Now we can make a barplot of the most frequent terms
 
 ```r
 # convert to a matrix
@@ -203,7 +204,7 @@ barplot(term_frequency[1:20],col="tan",las=2,horiz=FALSE)
 
 ![](Election_Tweets_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
 
-## Wordclouds
+## Next we'll make wordclouds, a nice way to visually represent the most common words.
 
 
 ```r
@@ -234,14 +235,9 @@ word_freqs <- data.frame(term=names(term_frequency),num=term_frequency)
 wordcloud(word_freqs$term,word_freqs$num,max.words=40,colors="red")
 ```
 
-```
-## Warning in wordcloud(word_freqs$term, word_freqs$num, max.words = 40,
-## colors = "red"): trumpwon could not be fit on page. It will not be plotted.
-```
-
 ![](Election_Tweets_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
 
-### We can make this a little nicer by adding a colormap to the image.
+### We can make this look a little nicer by adding a colormap to the image.
 
 ```r
 ## Add colors to the wordcloud
